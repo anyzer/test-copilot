@@ -1,5 +1,4 @@
-import MyCodec.avroSettings
-import fs2.kafka.{AutoOffsetReset, CommittableConsumerRecord, ConsumerSettings, Deserializer, KafkaConsumer, KeyDeserializer, ValueDeserializer}
+import fs2.kafka.{AutoOffsetReset, ConsumerSettings, KafkaConsumer, KeyDeserializer, ValueDeserializer}
 import cats.effect.{IO, Resource}
 import fs2.kafka.vulcan.*
 import MyCodec.keyCodec

@@ -1,11 +1,5 @@
-import cats.effect.{IO, IOApp, Resource}
+import cats.effect.IO
 import fs2.kafka.*
-import fs2.kafka.vulcan.*
-//import com.sksamuel.avro4s.*
-//import org.apache.avro.generic.GenericRecord
-import _root_.vulcan.Codec
-import _root_.vulcan.generic.*
-import fs2.kafka.vulcan.{AvroDeserializer, AvroSettings}
 import MyCodec.*
 
 case class MyKey(name: String)
