@@ -1,3 +1,5 @@
+package serd.test
+
 import cats.effect.IO
 import fs2.kafka.*
 import MyCodec.*

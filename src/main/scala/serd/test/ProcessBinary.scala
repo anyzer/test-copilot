@@ -1,27 +1,28 @@
-import fs2.kafka.{AutoOffsetReset, ConsumerSettings, KafkaConsumer, KeyDeserializer, ValueDeserializer}
+package serd.test
+
 import cats.effect.{IO, Resource}
 import fs2.kafka.vulcan.*
-import MyCodec.keyCodec
-import MyCodec.valueCodec
+import fs2.kafka.*
+import MyCodec.{keyCodec, valueCodec}
 
-class ProcessBinary {
+class ProcessBinary(config: MyConfig) {
 
-  val avroSettings: AvroSettings[IO] = AvroSettings(SchemaRegistryClientSettings[IO]("http://localhost:8081"))
+  val avroSettings: AvroSettings[IO] = AvroSettings(SchemaRegistryClientSettings[IO](config.schemaRegistry))
 
   val valueDeserializer: Resource[IO, ValueDeserializer[IO, MyRecord]] = AvroDeserializer[MyRecord].forValue(avroSettings)
   val keyDeserializer: Resource[IO, KeyDeserializer[IO, MyKey]] = AvroDeserializer[MyKey].forKey(avroSettings)
 
   private val consumerSettings: ConsumerSettings[IO, Array[Byte], Array[Byte]] =
     ConsumerSettings[IO, Array[Byte], Array[Byte]]
-      .withBootstrapServers("localhost:9092")
+      .withBootstrapServers(config.bootstrap)
       .withGroupId("binary-group")
       .withAutoOffsetReset(AutoOffsetReset.Earliest)
 
   val myStream: fs2.Stream[IO, KafkaConsumer[IO, Array[Byte], Array[Byte]]] =
-    KafkaConsumer.stream(consumerSettings).subscribeTo("test-topic")
+    KafkaConsumer.stream(consumerSettings).subscribeTo(config.topic)
 
   def run(): IO[Unit] =
-    valueDeserializer.use{ vd =>
+    valueDeserializer.use{ (vd: ValueDeserializer[IO, MyRecord]) =>
       
       myStream.records.evalTap { x =>
         val k = x.record.key

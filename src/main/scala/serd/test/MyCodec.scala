@@ -1,8 +1,9 @@
-import vulcan.Codec
+package serd.test
+
 import _root_.vulcan.generic.*
-import cats.effect.IO
+import cats.effect.{IO, Resource}
 import fs2.kafka.vulcan.{AvroDeserializer, AvroSerializer, AvroSettings, SchemaRegistryClientSettings}
-import cats.effect.Resource
+import vulcan.Codec
 import fs2.kafka.*
 
 
@@ -23,9 +24,5 @@ object MyCodec {
       .withBootstrapServers("localhost:9092")
       .withGroupId("MyRecord-Group")
       .withEnableAutoCommit(false)
-
-  val producerSettings: ProducerSettings[IO, MyKey, MyRecord] =
-    ProducerSettings[IO, MyKey, MyRecord](keySerializer, valueSerializer)
-      .withBootstrapServers("localhost:9092")
 
 }
